@@ -1,5 +1,6 @@
-import { services, figures, domains } from '@/lib/site';
+import { services, domains } from '@/lib/site';
 import { Reveal, SectionHeading } from '@/components/ui/reveal';
+import { ServiceReel } from '@/components/ui/reel';
 import { ExternalIcon } from '@/components/ui/icons';
 
 export function Services() {
@@ -29,24 +30,17 @@ export function Services() {
             ))}
           </div>
 
-          {/* Real output from delivered projects, not stock illustration */}
+          {/* The same service reel that runs on services.biopc.org */}
           <Reveal delay={120}>
             <div className="surface h-full rounded-3xl p-6">
-              <p className="text-xs font-bold uppercase tracking-wider text-muted">Sample deliverables</p>
-              <div className="mt-4 grid grid-cols-3 gap-3">
-                {figures.map((f) => (
-                  <figure key={f.src} className="group">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={f.src}
-                      alt={`${f.label} analysis figure`}
-                      loading="lazy"
-                      className="aspect-square w-full rounded-xl border border-[rgb(var(--border))] bg-white object-contain p-1.5 transition duration-300 group-hover:scale-[1.04]"
-                    />
-                    <figcaption className="mt-1.5 text-center text-[10px] font-medium text-muted">{f.label}</figcaption>
-                  </figure>
-                ))}
-              </div>
+              <p className="text-xs font-bold uppercase tracking-wider text-muted">Service overview reel</p>
+              <figure className="mt-4">
+                <ServiceReel />
+                <figcaption className="mt-2.5 text-center text-[11px] leading-relaxed text-muted">
+                  Molecular renderings in the reel are illustrative. Your project&rsquo;s own results are what get
+                  delivered.
+                </figcaption>
+              </figure>
               <p className="mt-5 text-xs leading-relaxed text-muted">
                 Every figure ships with the raw trajectory, topology and parameter files, CSV data tables, and the
                 analysis scripts needed to regenerate it.

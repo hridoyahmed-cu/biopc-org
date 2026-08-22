@@ -316,6 +316,11 @@ export const services = [
   { number: '06', title: 'Binding free energy', detail: 'MM/PBSA, MM/GBSA, per-residue decomposition' },
 ];
 
+/**
+ * Sample analysis figures. Currently unused: the services panel shows the
+ * overview reel instead. Kept, along with the files in public/figures, so the
+ * grid can be restored - either in place of the video or beneath it.
+ */
 export const figures = [
   { src: '/figures/rmsd.png', label: 'RMSD' },
   { src: '/figures/rmsf.png', label: 'RMSF' },
