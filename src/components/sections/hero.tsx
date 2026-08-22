@@ -54,12 +54,15 @@ function DnaHelix() {
           <stop offset="0%" stopColor="#bea6ff" />
           <stop offset="100%" stopColor="#8344ff" />
         </linearGradient>
-        {/* Fades the helix out at the top and bottom edges of the screen */}
+        {/* Fades the helix out at the top and bottom edges of the screen.
+            A mask is read as luminance, so these stops must be WHITE - white
+            keeps the pixel, black removes it. Black stops here hide the whole
+            helix and leave the screen blank. */}
         <linearGradient id="helix-fade" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#000" stopOpacity="0" />
-          <stop offset="18%" stopColor="#000" stopOpacity="1" />
-          <stop offset="82%" stopColor="#000" stopOpacity="1" />
-          <stop offset="100%" stopColor="#000" stopOpacity="0" />
+          <stop offset="0%" stopColor="#fff" stopOpacity="0" />
+          <stop offset="18%" stopColor="#fff" stopOpacity="1" />
+          <stop offset="82%" stopColor="#fff" stopOpacity="1" />
+          <stop offset="100%" stopColor="#fff" stopOpacity="0" />
         </linearGradient>
         <mask id="helix-mask">
           <rect x="0" y="0" width="240" height="200" fill="url(#helix-fade)" />
@@ -124,7 +127,11 @@ function BioPcVisual() {
               style={{ background: 'radial-gradient(70% 70% at 50% 45%, rgba(117,33,247,0.35) 0%, rgba(19,29,67,0) 100%)' }}
               aria-hidden="true"
             />
-            <DnaHelix />
+            {/* Positioned, so it paints above the glow rather than under it -
+                an in-flow SVG would sit below the absolute div beside it. */}
+            <div className="absolute inset-0">
+              <DnaHelix />
+            </div>
             {/* Faint scanlines, for the screen to read as a screen */}
             <div
               className="pointer-events-none absolute inset-0 opacity-[0.14]"
