@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg: 255 255 255;
+    --bg-subtle: 245 247 255;
+    --fg: 19 29 67;
+    --fg-muted: 71 84 128;
+    --card: 255 255 255;
+    --border: 226 232 245;
+    --ring: 117 33 247;
+  }
+
+  .dark {
+    --bg: 8 11 26;
+    --bg-subtle: 14 18 40;
+    --fg: 236 240 255;
+    --fg-muted: 158 170 214;
+    --card: 17 22 46;
+    --border: 39 47 84;
+    --ring: 159 117 255;
+  }
+
+  * {
+    border-color: rgb(var(--border));
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Clears the fixed 64px navbar when an in-page anchor is targeted. */
+    scroll-padding-top: 5.5rem;
+  }
+
+  body {
+    background-color: rgb(var(--bg));
+    color: rgb(var(--fg));
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: rgba(117, 33, 247, 0.22);
+  }
+}
+
+@layer components {
+  .container-tight {
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-6 lg:px-8;
+  }
+
+  .text-muted {
+    color: rgb(var(--fg-muted));
+  }
+
+  .surface {
+    background-color: rgb(var(--card));
+    border: 1px solid rgb(var(--border));
+  }
+
+  .glass {
+    background-color: rgb(var(--card) / 0.72);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgb(var(--border) / 0.8);
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-primary {
+    @apply btn bg-brand-gradient text-white shadow-glow hover:-translate-y-0.5 hover:brightness-110 active:translate-y-0;
+  }
+
+  .btn-secondary {
+    @apply btn surface text-[rgb(var(--fg))] hover:-translate-y-0.5 hover:border-accent-400 hover:text-accent-600;
+  }
+
+  .btn-ghost {
+    @apply btn border border-transparent px-4 py-2 text-accent-600 hover:bg-accent-50 dark:hover:bg-accent-950/40;
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full border border-accent-200 bg-accent-50 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-accent-700 dark:border-accent-900/60 dark:bg-accent-950/40 dark:text-accent-300;
+  }
+
+  /* The standard hover treatment for every linkable card on the page. */
+  .card {
+    @apply surface rounded-3xl shadow-card transition-all duration-300 hover:-translate-y-2 hover:shadow-lift hover:border-accent-300;
+  }
+
+  .chip {
+    @apply inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg-subtle))] px-2.5 py-1 text-xs font-medium text-muted;
+  }
+
+  /*
+   * Scroll reveal, gated on JavaScript being available.
+   *
+   * The hidden state is applied by CSS only under .js-enabled, which the head
+   * script adds. Without JavaScript - or if the reveal observer never runs -
+   * the content is simply visible. Content must never depend on an observer
+   * firing in order to be readable.
+   */
+  .reveal {
+    transition:
+      opacity 0.7s ease-out,
+      transform 0.7s ease-out;
+  }
+
+  .js-enabled .reveal:not(.reveal-shown) {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(120deg, #1f45d6 0%, #7521f7 60%, #22c9d6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Pauses the partner marquee on hover so logos stay readable. */
+  .marquee-track:hover {
+    animation-play-state: paused;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
