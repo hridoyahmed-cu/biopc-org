@@ -17,10 +17,10 @@ export function About() {
           eyebrow="Who we are"
           title={
             <>
-              One lab, <span className="text-gradient">four things we do</span>
+              One center, <span className="text-gradient">four things we do</span>
             </>
           }
-          lede={`${site.org} began in ${site.founded} as a single online bioinformatics course. It is now a research-and-training lab: we teach, we publish, we run simulations for other groups, and we bring students together through a national olympiad.`}
+          lede={`${site.org} began in ${site.founded} as a single online bioinformatics course. It is now a research and training center: we teach, we publish, we run simulations for other groups, and we bring students together through a national olympiad.`}
         />
 
         {/* Mission / vision, stated plainly before the pillar cards */}

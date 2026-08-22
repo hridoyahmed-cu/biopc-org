@@ -9,7 +9,7 @@ export function Milestones() {
           eyebrow="Milestones"
           title={
             <>
-              From one online course <span className="text-gradient">to a research lab</span>
+              From one online course <span className="text-gradient">to a research center</span>
             </>
           }
           lede="Every signature programme BioPC has run since 2021 — the courses, the olympiads, the first publication, and the move offline."

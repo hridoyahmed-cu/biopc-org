@@ -73,9 +73,10 @@ const config: Config = {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-50%)' },
         },
-        spinSlow: {
-          '0%': { transform: 'rotateY(0deg)' },
-          '100%': { transform: 'rotateY(360deg)' },
+        // Shifts the helix by exactly one period, so the loop is seamless.
+        helix: {
+          '0%': { transform: 'translateY(0)' },
+          '100%': { transform: 'translateY(-96px)' },
         },
         glowPulse: {
           '0%, 100%': { boxShadow: '0 0 0 0 rgba(117, 33, 247, 0.38)' },
@@ -89,7 +90,7 @@ const config: Config = {
       animation: {
         float: 'float 7s ease-in-out infinite',
         marquee: 'marquee 38s linear infinite',
-        'spin-slow': 'spinSlow 14s linear infinite',
+        helix: 'helix 9s linear infinite',
         'glow-pulse': 'glowPulse 2.6s ease-out infinite',
         'nudge-x': 'nudgeX 1.4s ease-in-out infinite',
       },

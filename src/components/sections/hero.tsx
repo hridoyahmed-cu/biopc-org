@@ -1,110 +1,151 @@
-import Image from 'next/image';
 import { site, domains } from '@/lib/site';
 import { ArrowIcon } from '@/components/ui/icons';
 
+/* Helix geometry, in the screen's user units. */
+const CX = 120; // centre line of the helix
+const AMP = 44; // half-width of the twist
+const PERIOD = 96; // one full turn; the scroll animation shifts by exactly this
+const TOP = -PERIOD; // start a turn above the screen
+const BOTTOM = 288; // and finish one below, so the loop never shows an end
+const RUNG_STEP = 12;
+
+const phase = (y: number) => (2 * Math.PI * y) / PERIOD;
+
+/** Sine strand sampled finely enough that the curve reads as smooth. */
+function strandPath(sign: 1 | -1) {
+  const points: string[] = [];
+  for (let y = TOP; y <= BOTTOM; y += 4) {
+    const x = CX + sign * AMP * Math.sin(phase(y));
+    points.push(`${y === TOP ? 'M' : 'L'}${x.toFixed(1)} ${y}`);
+  }
+  return points.join(' ');
+}
+
 /**
- * Abstract protein-ligand binding graphic. Drawn inline rather than shipped as
- * a raster so it stays sharp at any size and inherits the brand palette.
+ * Base pairs. Their length falls out of the geometry - it collapses to zero
+ * where the strands cross - which is what sells the twist without needing to
+ * split the strands into front and back halves.
  */
-function BindingGraphic() {
+function rungs() {
+  const out: { y: number; x1: number; x2: number; open: number; front: boolean }[] = [];
+  for (let y = TOP; y <= BOTTOM; y += RUNG_STEP) {
+    const s = Math.sin(phase(y));
+    out.push({
+      y,
+      x1: CX + AMP * s,
+      x2: CX - AMP * s,
+      open: Math.abs(s), // 0 at a crossing, 1 at the widest point
+      front: Math.cos(phase(y)) > 0,
+    });
+  }
+  return out;
+}
+
+/** The animated double helix that lives on the screen. */
+function DnaHelix() {
   return (
-    <svg viewBox="0 0 320 320" className="h-full w-full" role="img" aria-label="Abstract protein-ligand binding structure">
+    <svg viewBox="0 0 240 200" className="h-full w-full" role="img" aria-label="Animated DNA double helix">
       <defs>
-        <linearGradient id="hero-strand" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#1f45d6" />
-          <stop offset="60%" stopColor="#7521f7" />
+        <linearGradient id="strand-a" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#8eb5ff" />
           <stop offset="100%" stopColor="#22c9d6" />
         </linearGradient>
-        <radialGradient id="hero-pocket" cx="50%" cy="50%">
-          <stop offset="0%" stopColor="#7521f7" stopOpacity="0.35" />
-          <stop offset="100%" stopColor="#7521f7" stopOpacity="0" />
-        </radialGradient>
+        <linearGradient id="strand-b" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#bea6ff" />
+          <stop offset="100%" stopColor="#8344ff" />
+        </linearGradient>
+        {/* Fades the helix out at the top and bottom edges of the screen */}
+        <linearGradient id="helix-fade" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#000" stopOpacity="0" />
+          <stop offset="18%" stopColor="#000" stopOpacity="1" />
+          <stop offset="82%" stopColor="#000" stopOpacity="1" />
+          <stop offset="100%" stopColor="#000" stopOpacity="0" />
+        </linearGradient>
+        <mask id="helix-mask">
+          <rect x="0" y="0" width="240" height="200" fill="url(#helix-fade)" />
+        </mask>
       </defs>
 
-      <circle cx="160" cy="160" r="120" fill="url(#hero-pocket)" />
-
-      {/* Two backbone strands twisting around the binding pocket */}
-      <path
-        d="M70 40 C150 90, 150 150, 70 200 C0 250, 30 280, 90 288"
-        fill="none"
-        stroke="url(#hero-strand)"
-        strokeWidth="7"
-        strokeLinecap="round"
-        opacity="0.85"
-      />
-      <path
-        d="M250 40 C170 90, 170 150, 250 200 C320 250, 290 280, 230 288"
-        fill="none"
-        stroke="url(#hero-strand)"
-        strokeWidth="7"
-        strokeLinecap="round"
-        opacity="0.85"
-      />
-
-      {/* Base-pair rungs */}
-      {[
-        [92, 66, 228, 66],
-        [118, 104, 202, 104],
-        [128, 142, 192, 142],
-        [118, 180, 202, 180],
-        [92, 218, 228, 218],
-        [76, 254, 244, 254],
-      ].map(([x1, y1, x2, y2], i) => (
-        <line
-          key={i}
-          x1={x1}
-          y1={y1}
-          x2={x2}
-          y2={y2}
-          stroke="url(#hero-strand)"
-          strokeWidth="3.5"
-          strokeLinecap="round"
-          opacity="0.5"
-        />
-      ))}
-
-      {/* Ligand: a small node cluster docked in the pocket */}
-      <g>
-        <line x1="160" y1="142" x2="142" y2="162" stroke="#22c9d6" strokeWidth="3" />
-        <line x1="160" y1="142" x2="180" y2="160" stroke="#22c9d6" strokeWidth="3" />
-        <line x1="142" y1="162" x2="158" y2="184" stroke="#22c9d6" strokeWidth="3" />
-        <line x1="180" y1="160" x2="158" y2="184" stroke="#22c9d6" strokeWidth="3" />
-        <circle cx="160" cy="142" r="8" fill="#7521f7" />
-        <circle cx="142" cy="162" r="7" fill="#22c9d6" />
-        <circle cx="180" cy="160" r="7" fill="#1f45d6" />
-        <circle cx="158" cy="184" r="6" fill="#22c9d6" />
+      <g mask="url(#helix-mask)">
+        {/* Translating a helix along its axis is indistinguishable from
+            rotating it, and it loops seamlessly at exactly one period. */}
+        <g className="animate-helix">
+          {rungs().map((r) => (
+            <g key={r.y} opacity={0.25 + 0.6 * r.open}>
+              <line
+                x1={r.x1}
+                y1={r.y}
+                x2={r.x2}
+                y2={r.y}
+                stroke={r.front ? '#22c9d6' : '#9f75ff'}
+                strokeWidth={2}
+                strokeLinecap="round"
+              />
+              <circle cx={r.x1} cy={r.y} r={1.6 + 1.8 * r.open} fill="#5ee0ea" />
+              <circle cx={r.x2} cy={r.y} r={1.6 + 1.8 * r.open} fill="#bea6ff" />
+            </g>
+          ))}
+          <path d={strandPath(1)} fill="none" stroke="url(#strand-a)" strokeWidth={4} strokeLinecap="round" />
+          <path d={strandPath(-1)} fill="none" stroke="url(#strand-b)" strokeWidth={4} strokeLinecap="round" />
+        </g>
       </g>
     </svg>
   );
 }
 
 /**
- * Hero visual. Per the BioPC design brief the mark rotates to reveal a
- * protein-ligand structure and back again, on a continuous loop. Two faces of
- * one 3D card, so the rotation is a single GPU transform - and it stops
- * entirely under prefers-reduced-motion via the global utility.
+ * The hero visual: a computer displaying a living double helix. Bio on a PC -
+ * the name of the organisation, drawn literally.
  */
-function RotatingMark() {
+function BioPcVisual() {
   return (
-    <div className="relative mx-auto aspect-square w-full max-w-[420px]" style={{ perspective: '1400px' }}>
-      <div className="absolute inset-0 rounded-full bg-brand-radial blur-2xl" aria-hidden="true" />
-      <div
-        className="absolute inset-0 animate-spin-slow"
-        style={{ transformStyle: 'preserve-3d' }}
-      >
-        <div
-          className="surface absolute inset-0 flex items-center justify-center rounded-full p-12 shadow-glow"
-          style={{ backfaceVisibility: 'hidden' }}
-        >
-          <Image src="/logo.png" alt={`${site.org} logo`} width={280} height={280} className="h-full w-full object-contain" priority />
+    <div className="mx-auto w-full max-w-[440px]">
+      <div className="relative">
+        <div className="absolute inset-0 -z-10 scale-110 bg-brand-radial blur-2xl" aria-hidden="true" />
+
+        {/* Monitor */}
+        <div className="surface overflow-hidden rounded-3xl shadow-glow">
+          {/* Bezel bar */}
+          <div className="flex items-center justify-between border-b border-[rgb(var(--border))] bg-[rgb(var(--bg-subtle))] px-4 py-2.5">
+            <div className="flex gap-1.5" aria-hidden="true">
+              <span className="h-2.5 w-2.5 rounded-full bg-brand-400/70" />
+              <span className="h-2.5 w-2.5 rounded-full bg-accent-400/70" />
+              <span className="h-2.5 w-2.5 rounded-full bg-teal-400/70" />
+            </div>
+            <span className="font-display text-[11px] font-bold uppercase tracking-[0.18em] text-muted">
+              {site.org}
+            </span>
+          </div>
+
+          {/* Screen */}
+          <div className="relative aspect-[6/5] bg-brand-950">
+            <div
+              className="absolute inset-0 opacity-60"
+              style={{ background: 'radial-gradient(70% 70% at 50% 45%, rgba(117,33,247,0.35) 0%, rgba(19,29,67,0) 100%)' }}
+              aria-hidden="true"
+            />
+            <DnaHelix />
+            {/* Faint scanlines, for the screen to read as a screen */}
+            <div
+              className="pointer-events-none absolute inset-0 opacity-[0.14]"
+              style={{
+                backgroundImage: 'repeating-linear-gradient(to bottom, rgba(255,255,255,0.5) 0 1px, transparent 1px 4px)',
+              }}
+              aria-hidden="true"
+            />
+          </div>
         </div>
-        <div
-          className="surface absolute inset-0 flex items-center justify-center rounded-full p-10 shadow-glow"
-          style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
-        >
-          <BindingGraphic />
-        </div>
+
+        {/* Stand and base */}
+        <div className="mx-auto h-5 w-16 rounded-b-lg bg-gradient-to-b from-[rgb(var(--border))] to-transparent" aria-hidden="true" />
+        <div className="mx-auto h-1.5 w-40 rounded-full bg-[rgb(var(--border))]" aria-hidden="true" />
       </div>
+
+      {/* The single BioPC slogan. Tracking tightens on narrow screens so it
+          stays on one line rather than breaking mid-slogan. */}
+      <p className="mt-8 text-center font-display text-sm font-bold uppercase tracking-[0.12em] sm:text-xl sm:tracking-[0.2em]">
+        <span className="text-gradient">{site.slogan}</span>
+      </p>
     </div>
   );
 }
@@ -115,7 +156,7 @@ export function Hero() {
       <div className="absolute inset-0 -z-10 bg-helix-grid [background-size:44px_44px]" aria-hidden="true" />
       <div className="absolute inset-x-0 top-0 -z-10 h-[560px] bg-brand-radial" aria-hidden="true" />
 
-      <div className="container-tight grid items-center gap-12 lg:grid-cols-[1.15fr_1fr]">
+      <div className="container-tight grid items-center gap-12 lg:grid-cols-[1.1fr_1fr]">
         <div>
           <span className="eyebrow">Since {site.founded} · Bangladesh</span>
           <h1 className="mt-5 font-display text-4xl font-extrabold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">
@@ -126,7 +167,7 @@ export function Hero() {
           </h1>
           <p className="mt-5 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
             We train biologists to compute, publish peer-reviewed research, run GPU molecular dynamics for other
-            laboratories, and host the national Biology &amp; Bioinformatics Olympiad — from one lab, in one place.
+            laboratories, and host the national Biology &amp; Bioinformatics Olympiad — from one center, in one place.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
@@ -138,13 +179,9 @@ export function Hero() {
               Explore our research
             </a>
           </div>
-
-          <p className="mt-8 max-w-md border-l-2 border-accent-400 pl-4 text-sm italic leading-relaxed text-muted">
-            &ldquo;{site.quote}&rdquo;
-          </p>
         </div>
 
-        <RotatingMark />
+        <BioPcVisual />
       </div>
     </section>
   );

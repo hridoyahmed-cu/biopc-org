@@ -9,14 +9,13 @@
 
 export const site = {
   org: 'BioPC',
-  tagline: 'A Bioinformatics Lab of Research & Training',
-  motto: 'Learn · Research · Innovate',
+  tagline: 'A Bioinformatics Research and Training Center',
   url: 'https://biopc.org',
   founded: 2021,
   description:
-    'BioPC is a research-and-training lab in bioinformatics: mentor-led courses, published computational and genomics research, GPU molecular dynamics services, and the national Biology & Bioinformatics Olympiad.',
-  quote:
-    'Challenge your intellect, test your skills, redefine the boundaries of scientific discoveries with BioPC.',
+    'BioPC is a bioinformatics research and training center: mentor-led courses, published computational and genomics research, GPU molecular dynamics services, and the national Biology & Bioinformatics Olympiad.',
+  /** The single BioPC slogan. One slogan, used in one place - the hero. */
+  slogan: 'Learn · Research · Innovate',
   email: 'research@biopc.org',
   altEmail: 'biopc.research@gmail.com',
   whatsapp: '+8801855310554',
@@ -380,7 +379,7 @@ export const founder = {
   ],
   statement: [
     'I started BioPC in 2021 with one observation: in Bangladesh, research is something students are told about, not something they are given the chance to do. Bioinformatics made that gap fixable. It needs a laptop, an internet connection and a mentor who will sit with you through the first failed analysis - not a million-taka facility.',
-    'What began as a single online course has become a lab of research and training. More than three thousand learners have come through our programmes. Our interns have co-authored papers in international journals. Our olympiads have brought students from more than thirty universities into the same competition. And our own research now runs from the bench to the genome - patient cohorts, targeted panels, exomes, and the computational work that makes sense of them.',
+    'What began as a single online course has become a research and training center. More than three thousand learners have come through our programmes. Our interns have co-authored papers in international journals. Our olympiads have brought students from more than thirty universities into the same competition. And our own research now runs from the bench to the genome - patient cohorts, targeted panels, exomes, and the computational work that makes sense of them.',
     'If you are a student wondering whether research is for you, it is. Come and find out with us.',
   ],
   href: domains.founder,
