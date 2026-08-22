@@ -452,11 +452,57 @@ export const partners = [
   { name: 'USTC Pharma Science Club', logo: '/partners/ustc-pharma.jpg' },
 ];
 
-export const programPhotos = [
-  '/programs/program-1.jpg',
-  '/programs/program-2.jpg',
-  '/programs/program-3.jpg',
-  '/programs/program-4.jpg',
-  '/programs/program-5.jpg',
-  '/programs/program-6.jpg',
+/**
+ * Programme posters, shown uncropped at their own aspect ratio.
+ *
+ * `w` and `h` are the real pixel dimensions of each file. They are declared
+ * so the browser can reserve the right box before a lazily-loaded poster
+ * arrives - without them the masonry wall reflows as each image lands.
+ * If you swap a poster, update its dimensions here too.
+ */
+export type ProgramPoster = { src: string; w: number; h: number; alt: string };
+
+export const programPhotos: ProgramPoster[] = [
+  {
+    src: '/programs/r-programming.jpg',
+    w: 720,
+    h: 900,
+    alt: 'R Programming for Biologists - BioPC course poster, registration deadline 31 July 2026',
+  },
+  {
+    src: '/programs/program-1.jpg',
+    w: 900,
+    h: 754,
+    alt: 'Seven-day virtual training session with BioPC - programme poster',
+  },
+  {
+    src: '/programs/program-2.jpg',
+    w: 637,
+    h: 900,
+    alt: 'Bioinformatics Olympiad free registration poster - top 30 awarded, open to all universities',
+  },
+  {
+    src: '/programs/program-3.jpg',
+    w: 675,
+    h: 900,
+    alt: 'BioPC speaker panel poster for the basic bioinformatics and drug design modules',
+  },
+  {
+    src: '/programs/program-4.jpg',
+    w: 720,
+    h: 900,
+    alt: 'BioPC for Beginners poster - who can apply and what participants receive',
+  },
+  {
+    src: '/programs/program-5.jpg',
+    w: 706,
+    h: 900,
+    alt: 'BioPC two-in-one programme poster - bioinformatics, drug design, vaccine design and career guidelines',
+  },
+  {
+    src: '/programs/program-6.jpg',
+    w: 900,
+    h: 900,
+    alt: 'Learn SPSS and KoboToolbox with BioPC - programme poster',
+  },
 ];

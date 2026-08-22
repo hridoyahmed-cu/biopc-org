@@ -88,17 +88,23 @@ export function About() {
           })}
         </div>
 
-        {/* A strip of real programme photography, so the claims above have faces */}
+        {/* The real programme posters, so the claims above have evidence.
+            Laid out in CSS columns rather than a grid: these are designed
+            artwork of differing shapes, and a grid can only make them line up
+            by cropping them. Columns let every poster keep its own aspect
+            ratio and still tile without gaps. */}
         <Reveal delay={120}>
-          <div className="mt-14 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-            {programPhotos.map((src, i) => (
+          <div className="mt-14 columns-2 gap-4 sm:columns-3 lg:columns-4">
+            {programPhotos.map((poster) => (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                key={src}
-                src={src}
-                alt={`BioPC programme ${i + 1}`}
+                key={poster.src}
+                src={poster.src}
+                alt={poster.alt}
+                width={poster.w}
+                height={poster.h}
                 loading="lazy"
-                className="h-28 w-full rounded-2xl object-cover grayscale transition duration-500 hover:grayscale-0"
+                className="mb-4 w-full break-inside-avoid rounded-2xl border border-[rgb(var(--border))] shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-lift"
               />
             ))}
           </div>
