@@ -470,6 +470,12 @@ export const programPhotos: ProgramPoster[] = [
     alt: 'R Programming for Biologists - BioPC course poster, registration deadline 31 July 2026',
   },
   {
+    src: '/programs/internship-4.jpg',
+    w: 719,
+    h: 900,
+    alt: 'Bioinformatics Research Internship 4.0 instructors panel - Md. Muhareb Hossain, Hridoy Ahmed, Md. Mustak Khan and Md. Foyzur Rahman',
+  },
+  {
     src: '/programs/program-1.jpg',
     w: 900,
     h: 754,
