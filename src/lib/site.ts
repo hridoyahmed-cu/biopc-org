@@ -59,6 +59,7 @@ export const nav: NavGroup[] = [
       { label: 'Mission & Vision', href: '#about' },
       { label: 'Milestones', href: '#milestones' },
       { label: 'Founder', href: '#founder' },
+      { label: 'Gallery', href: '#gallery' },
     ],
   },
   {
@@ -519,15 +520,14 @@ export const programPhotos: ProgramPoster[] = [
 ];
 
 /**
- * The hero gallery: photographs of the actual work, rather than an
- * illustration of it. Ordered as they are laid out and as they float in -
- * the first frame is the tall one on the left, the rest fill in around it.
+ * Photographs of the work itself, as opposed to the posters advertising it.
+ * These carry the hero mosaic and close out the wall at the foot of the page.
  *
  * `w` and `h` are the real pixel dimensions of each file, so the browser
  * reserves the right box before the photo lands. Update them if you swap a
- * photo, or the hero will reflow as the images arrive.
+ * photo, or the layout reflows as the images arrive.
  */
-export const heroPhotos: ProgramPoster[] = [
+export const workPhotos: ProgramPoster[] = [
   {
     src: '/gallery/mentoring-desk.webp',
     w: 1204,
@@ -559,3 +559,36 @@ export const heroPhotos: ProgramPoster[] = [
     alt: 'BioPC members briefing a group of students outdoors during a field visit',
   },
 ];
+
+/**
+ * Looks an image up by src, so one list can reference a picture another list
+ * already declares rather than restating its dimensions and alt text. Throws
+ * at build time if the src is not declared anywhere - a typo here would
+ * otherwise ship as a silently missing frame.
+ */
+function picture(src: string): ProgramPoster {
+  const found = [...programPhotos, ...workPhotos].find((p) => p.src === src);
+  if (!found) throw new Error(`No image is declared for ${src}`);
+  return found;
+}
+
+/**
+ * The hero gallery: five frames, in the order they are laid out and in the
+ * order they float in. The first is the tall one down the left; the last is
+ * the poster for the programme currently running, so the hero always closes
+ * on what a visitor can join today.
+ */
+export const heroPhotos: ProgramPoster[] = [
+  picture('/gallery/workshop-hall.webp'),
+  picture('/gallery/qpcr-lab.webp'),
+  picture('/gallery/mentoring-desk.webp'),
+  picture('/gallery/partner-crest.webp'),
+  picture('/programs/internship-4.jpg'),
+];
+
+/**
+ * The wall at the foot of the homepage: every programme poster, then every
+ * photograph. The two sets are disjoint, so this needs no de-duplication -
+ * a picture that appears in the hero appears here exactly once as well.
+ */
+export const galleryPhotos: ProgramPoster[] = [...programPhotos, ...workPhotos];

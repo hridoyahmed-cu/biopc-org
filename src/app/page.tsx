@@ -11,6 +11,7 @@ import { Milestones } from '@/components/sections/milestones';
 import { Founder } from '@/components/sections/founder';
 import { Team } from '@/components/sections/team';
 import { Contact } from '@/components/sections/contact';
+import { Gallery } from '@/components/sections/gallery';
 import { JsonLd } from '@/components/site/json-ld';
 
 export default function HomePage() {
@@ -30,6 +31,7 @@ export default function HomePage() {
         <Founder />
         <Team />
         <Contact />
+        <Gallery />
       </main>
       <Footer />
     </>

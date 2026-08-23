@@ -4,19 +4,40 @@ import { site, domains, heroPhotos } from '@/lib/site';
 import { ArrowIcon } from '@/components/ui/icons';
 
 /**
- * Where each frame sits in the two-column mosaic. The first photo is the tall
- * one down the left; it carries no aspect ratio of its own because it stretches
+ * Where each frame sits in the two-column mosaic, in float-in order. The last
+ * one is the poster for the programme currently running: it takes the tall
+ * right-hand slot and carries no aspect ratio of its own, because it stretches
  * to whatever the two frames beside it add up to.
+ *
+ * That stretch is why the two frames are 17:10 rather than the 4:3 used
+ * elsewhere. Two of them plus the gap come to 1.252x the column width, which
+ * is the poster's own 719x900 proportion to within half a pixel at every
+ * breakpoint - so the poster fills its slot without `object-cover` cropping
+ * anything off it. Change either number and the poster starts losing edges.
  */
-const tileShape = ['row-span-2', 'aspect-[4/3]', 'aspect-[4/3]', 'aspect-[4/3]', 'aspect-[4/3]'];
+const tileShape = [
+  'col-start-1 row-start-1 aspect-[17/10]',
+  'col-start-1 row-start-2 aspect-[17/10]',
+  'col-start-1 row-start-3 aspect-[4/3]',
+  'col-start-2 row-start-3 aspect-[4/3]',
+  'col-start-2 row-start-1 row-span-2',
+];
+
+/**
+ * Per-frame crop bias. The mentoring shot is the one portrait photograph in
+ * the set, and its subjects sit low in the frame, so a centred crop would take
+ * the ceiling and cut them off.
+ */
+const tileFocus = ['', '', '[object-position:50%_64%]', '', ''];
 
 /** How far apart the frames float in, in milliseconds. */
 const STAGGER = 170;
 
 /**
- * The hero visual: a small gallery of the work itself - a teaching session, a
- * lab bench, a full workshop hall - whose frames float in one after another
- * and then settle into a slow drift.
+ * The hero visual: a small gallery of the work itself - a full workshop hall,
+ * a lab bench, a teaching session - closing on the poster for the programme
+ * running now. The frames float in one after another, then settle into a slow
+ * drift.
  */
 function HeroGallery() {
   return (
@@ -40,7 +61,7 @@ function HeroGallery() {
                 /* The hero is the first thing on screen, so these load eagerly
                    - lazily loaded frames would float in to empty boxes. */
                 decoding="async"
-                className="h-full w-full object-cover transition-transform duration-500 ease-out"
+                className={`h-full w-full object-cover transition-transform duration-500 ease-out ${tileFocus[i] ?? ''}`}
               />
             </figure>
           ))}

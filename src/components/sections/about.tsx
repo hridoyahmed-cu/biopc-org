@@ -1,4 +1,4 @@
-import { pillars, site, programPhotos } from '@/lib/site';
+import { pillars, site } from '@/lib/site';
 import { Reveal, SectionHeading } from '@/components/ui/reveal';
 import { AcademyIcon, ArrowIcon, ExternalIcon, OlympiadIcon, ResearchIcon, ServicesIcon } from '@/components/ui/icons';
 
@@ -87,28 +87,6 @@ export function About() {
             );
           })}
         </div>
-
-        {/* The real programme posters, so the claims above have evidence.
-            Laid out in CSS columns rather than a grid: these are designed
-            artwork of differing shapes, and a grid can only make them line up
-            by cropping them. Columns let every poster keep its own aspect
-            ratio and still tile without gaps. */}
-        <Reveal delay={120}>
-          <div className="mt-14 columns-2 gap-4 sm:columns-3 lg:columns-4">
-            {programPhotos.map((poster) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                key={poster.src}
-                src={poster.src}
-                alt={poster.alt}
-                width={poster.w}
-                height={poster.h}
-                loading="lazy"
-                className="mb-4 w-full break-inside-avoid rounded-2xl border border-[rgb(var(--border))] shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-lift"
-              />
-            ))}
-          </div>
-        </Reveal>
       </div>
     </section>
   );
