@@ -1,151 +1,50 @@
-import { site, domains } from '@/lib/site';
+import type { CSSProperties } from 'react';
+
+import { site, domains, heroPhotos } from '@/lib/site';
 import { ArrowIcon } from '@/components/ui/icons';
 
-/* Helix geometry, in the screen's user units. */
-const CX = 120; // centre line of the helix
-const AMP = 44; // half-width of the twist
-const PERIOD = 96; // one full turn; the scroll animation shifts by exactly this
-const TOP = -PERIOD; // start a turn above the screen
-const BOTTOM = 288; // and finish one below, so the loop never shows an end
-const RUNG_STEP = 12;
+/**
+ * Where each frame sits in the two-column mosaic. The first photo is the tall
+ * one down the left; it carries no aspect ratio of its own because it stretches
+ * to whatever the two frames beside it add up to.
+ */
+const tileShape = ['row-span-2', 'aspect-[4/3]', 'aspect-[4/3]', 'aspect-[4/3]', 'aspect-[4/3]'];
 
-const phase = (y: number) => (2 * Math.PI * y) / PERIOD;
-
-/** Sine strand sampled finely enough that the curve reads as smooth. */
-function strandPath(sign: 1 | -1) {
-  const points: string[] = [];
-  for (let y = TOP; y <= BOTTOM; y += 4) {
-    const x = CX + sign * AMP * Math.sin(phase(y));
-    points.push(`${y === TOP ? 'M' : 'L'}${x.toFixed(1)} ${y}`);
-  }
-  return points.join(' ');
-}
+/** How far apart the frames float in, in milliseconds. */
+const STAGGER = 170;
 
 /**
- * Base pairs. Their length falls out of the geometry - it collapses to zero
- * where the strands cross - which is what sells the twist without needing to
- * split the strands into front and back halves.
+ * The hero visual: a small gallery of the work itself - a teaching session, a
+ * lab bench, a full workshop hall - whose frames float in one after another
+ * and then settle into a slow drift.
  */
-function rungs() {
-  const out: { y: number; x1: number; x2: number; open: number; front: boolean }[] = [];
-  for (let y = TOP; y <= BOTTOM; y += RUNG_STEP) {
-    const s = Math.sin(phase(y));
-    out.push({
-      y,
-      x1: CX + AMP * s,
-      x2: CX - AMP * s,
-      open: Math.abs(s), // 0 at a crossing, 1 at the widest point
-      front: Math.cos(phase(y)) > 0,
-    });
-  }
-  return out;
-}
-
-/** The animated double helix that lives on the screen. */
-function DnaHelix() {
-  return (
-    <svg viewBox="0 0 240 200" className="h-full w-full" role="img" aria-label="Animated DNA double helix">
-      <defs>
-        <linearGradient id="strand-a" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#8eb5ff" />
-          <stop offset="100%" stopColor="#22c9d6" />
-        </linearGradient>
-        <linearGradient id="strand-b" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#bea6ff" />
-          <stop offset="100%" stopColor="#8344ff" />
-        </linearGradient>
-        {/* Fades the helix out at the top and bottom edges of the screen.
-            A mask is read as luminance, so these stops must be WHITE - white
-            keeps the pixel, black removes it. Black stops here hide the whole
-            helix and leave the screen blank. */}
-        <linearGradient id="helix-fade" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#fff" stopOpacity="0" />
-          <stop offset="18%" stopColor="#fff" stopOpacity="1" />
-          <stop offset="82%" stopColor="#fff" stopOpacity="1" />
-          <stop offset="100%" stopColor="#fff" stopOpacity="0" />
-        </linearGradient>
-        <mask id="helix-mask">
-          <rect x="0" y="0" width="240" height="200" fill="url(#helix-fade)" />
-        </mask>
-      </defs>
-
-      <g mask="url(#helix-mask)">
-        {/* Translating a helix along its axis is indistinguishable from
-            rotating it, and it loops seamlessly at exactly one period. */}
-        <g className="animate-helix">
-          {rungs().map((r) => (
-            <g key={r.y} opacity={0.25 + 0.6 * r.open}>
-              <line
-                x1={r.x1}
-                y1={r.y}
-                x2={r.x2}
-                y2={r.y}
-                stroke={r.front ? '#22c9d6' : '#9f75ff'}
-                strokeWidth={2}
-                strokeLinecap="round"
-              />
-              <circle cx={r.x1} cy={r.y} r={1.6 + 1.8 * r.open} fill="#5ee0ea" />
-              <circle cx={r.x2} cy={r.y} r={1.6 + 1.8 * r.open} fill="#bea6ff" />
-            </g>
-          ))}
-          <path d={strandPath(1)} fill="none" stroke="url(#strand-a)" strokeWidth={4} strokeLinecap="round" />
-          <path d={strandPath(-1)} fill="none" stroke="url(#strand-b)" strokeWidth={4} strokeLinecap="round" />
-        </g>
-      </g>
-    </svg>
-  );
-}
-
-/**
- * The hero visual: a computer displaying a living double helix. Bio on a PC -
- * the name of the organisation, drawn literally.
- */
-function BioPcVisual() {
+function HeroGallery() {
   return (
     <div className="mx-auto w-full max-w-[440px]">
       <div className="relative">
         <div className="absolute inset-0 -z-10 scale-110 bg-brand-radial blur-2xl" aria-hidden="true" />
 
-        {/* Monitor */}
-        <div className="surface overflow-hidden rounded-3xl shadow-glow">
-          {/* Bezel bar */}
-          <div className="flex items-center justify-between border-b border-[rgb(var(--border))] bg-[rgb(var(--bg-subtle))] px-4 py-2.5">
-            <div className="flex gap-1.5" aria-hidden="true">
-              <span className="h-2.5 w-2.5 rounded-full bg-brand-400/70" />
-              <span className="h-2.5 w-2.5 rounded-full bg-accent-400/70" />
-              <span className="h-2.5 w-2.5 rounded-full bg-teal-400/70" />
-            </div>
-            <span className="font-display text-[11px] font-bold uppercase tracking-[0.18em] text-muted">
-              {site.org}
-            </span>
-          </div>
-
-          {/* Screen */}
-          <div className="relative aspect-[6/5] bg-brand-950">
-            <div
-              className="absolute inset-0 opacity-60"
-              style={{ background: 'radial-gradient(70% 70% at 50% 45%, rgba(117,33,247,0.35) 0%, rgba(19,29,67,0) 100%)' }}
-              aria-hidden="true"
-            />
-            {/* Positioned, so it paints above the glow rather than under it -
-                an in-flow SVG would sit below the absolute div beside it. */}
-            <div className="absolute inset-0">
-              <DnaHelix />
-            </div>
-            {/* Faint scanlines, for the screen to read as a screen */}
-            <div
-              className="pointer-events-none absolute inset-0 opacity-[0.14]"
-              style={{
-                backgroundImage: 'repeating-linear-gradient(to bottom, rgba(255,255,255,0.5) 0 1px, transparent 1px 4px)',
-              }}
-              aria-hidden="true"
-            />
-          </div>
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
+          {heroPhotos.map((photo, i) => (
+            <figure
+              key={photo.src}
+              className={`photo-float ${tileShape[i] ?? 'aspect-[4/3]'}`}
+              style={{ '--float-delay': `${i * STAGGER}ms` } as CSSProperties}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={photo.src}
+                alt={photo.alt}
+                width={photo.w}
+                height={photo.h}
+                /* The hero is the first thing on screen, so these load eagerly
+                   - lazily loaded frames would float in to empty boxes. */
+                decoding="async"
+                className="h-full w-full object-cover transition-transform duration-500 ease-out"
+              />
+            </figure>
+          ))}
         </div>
-
-        {/* Stand and base */}
-        <div className="mx-auto h-5 w-16 rounded-b-lg bg-gradient-to-b from-[rgb(var(--border))] to-transparent" aria-hidden="true" />
-        <div className="mx-auto h-1.5 w-40 rounded-full bg-[rgb(var(--border))]" aria-hidden="true" />
       </div>
 
       {/* The single BioPC slogan. Tracking tightens on narrow screens so it
@@ -188,7 +87,7 @@ export function Hero() {
           </div>
         </div>
 
-        <BioPcVisual />
+        <HeroGallery />
       </div>
     </section>
   );

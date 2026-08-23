@@ -517,3 +517,45 @@ export const programPhotos: ProgramPoster[] = [
     alt: 'Learn SPSS and KoboToolbox with BioPC - programme poster',
   },
 ];
+
+/**
+ * The hero gallery: photographs of the actual work, rather than an
+ * illustration of it. Ordered as they are laid out and as they float in -
+ * the first frame is the tall one on the left, the rest fill in around it.
+ *
+ * `w` and `h` are the real pixel dimensions of each file, so the browser
+ * reserves the right box before the photo lands. Update them if you swap a
+ * photo, or the hero will reflow as the images arrive.
+ */
+export const heroPhotos: ProgramPoster[] = [
+  {
+    src: '/gallery/mentoring-desk.webp',
+    w: 1204,
+    h: 1600,
+    alt: 'BioPC mentors working through a problem with a student across a classroom desk at the University of Chittagong',
+  },
+  {
+    src: '/gallery/qpcr-lab.webp',
+    w: 1600,
+    h: 1200,
+    alt: 'A BioPC researcher reading a real-time PCR amplification plot beside a QuantStudio thermal cycler',
+  },
+  {
+    src: '/gallery/workshop-hall.webp',
+    w: 960,
+    h: 720,
+    alt: 'A full lecture hall at the free BioPC workshop on bioinformatics and computer-aided drug design',
+  },
+  {
+    src: '/gallery/partner-crest.webp',
+    w: 1080,
+    h: 810,
+    alt: 'The BioPC team presenting a commemorative crest to a faculty member after a partner university session',
+  },
+  {
+    src: '/gallery/field-briefing.webp',
+    w: 1080,
+    h: 810,
+    alt: 'BioPC members briefing a group of students outdoors during a field visit',
+  },
+];
