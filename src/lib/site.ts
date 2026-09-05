@@ -379,9 +379,8 @@ export const founder = {
   affiliation: 'Research Associate, Functional Genomics & Proteomics Laboratory, University of Chittagong',
   photo: '/founder.jpg',
   credentials: [
-    'M.Sc. Genetic Engineering & Biotechnology, University of Chittagong - First Class, 2nd position',
-    'B.Sc. Genetic Engineering & Biotechnology, University of Chittagong - First Class, 4th position',
-    'Four peer-reviewed publications, two in Q1 journals',
+    'M.Sc. Genetic Engineering & Biotechnology, University of Chittagong - First Class',
+    'B.Sc. Genetic Engineering & Biotechnology, University of Chittagong - First Class',
   ],
   statement: [
     'I started BioPC in 2021 with one observation: in Bangladesh, research is something students are told about, not something they are given the chance to do. Bioinformatics made that gap fixable. It needs a laptop, an internet connection and a mentor who will sit with you through the first failed analysis - not a million-taka facility.',
